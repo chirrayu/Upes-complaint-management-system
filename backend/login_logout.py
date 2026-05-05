@@ -3,8 +3,8 @@ from pymongo import MongoClient
 import jwt
 from datetime import datetime, timedelta
 import portal_config
-from database import users_col
-from middleware import token_required
+from app_db import users_col
+from auth_middleware import token_required
 
 auth_bp = Blueprint('auth', __name__)
 

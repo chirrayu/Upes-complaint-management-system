@@ -2,11 +2,11 @@ from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
 import uuid
 
-from database import users_col
+from app_db import users_col
 
 user_update_bp = Blueprint('user_update', __name__)
 
-from middleware import token_required
+from auth_middleware import token_required
 
 @user_update_bp.route('/api/users', methods=['POST'])
 @token_required

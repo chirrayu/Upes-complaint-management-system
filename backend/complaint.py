@@ -4,7 +4,7 @@ from datetime import datetime
 import threading
 import send_email
 
-from database import complaints_col, counters_col, users_col
+from app_db import complaints_col, counters_col, users_col
 
 complaint_bp = Blueprint('complaint', __name__)
 
@@ -52,7 +52,7 @@ def get_least_busy_staff():
             
     return least_busy
 
-from middleware import token_required
+from auth_middleware import token_required
 
 @complaint_bp.route('/api/complaints', methods=['POST'])
 @token_required
