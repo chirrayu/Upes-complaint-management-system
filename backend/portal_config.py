@@ -9,3 +9,9 @@ MONGO_URI = os.getenv("MONGO_URI")
 DB_NAME = os.getenv("DB_NAME", "complaints")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
+
+# Validation for deployment
+if not MONGO_URI:
+    print("[CRITICAL ERROR] MONGO_URI is not set in environment variables!")
+if not SENDER_EMAIL:
+    print("[WARNING] SENDER_EMAIL is not set in environment variables!")
