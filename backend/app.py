@@ -15,8 +15,6 @@ app.register_blueprint(complaint_bp)
 
 from database import categories_col, users_col
 
-app = Flask(__name__)
-
 @app.route('/api/categories', methods=['GET'])
 def get_categories():
     categories = list(categories_col.find({}, {"_id": 0}))

@@ -83,6 +83,7 @@ export function MyComplaints({ complaints, staffName, onNavigate, onUpdateStatus
                     <option value="resolved">Mark as Resolved</option>
                   </select>
                 </div>
+
               </div>
             ))
           )}

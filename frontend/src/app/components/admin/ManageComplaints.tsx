@@ -1,4 +1,4 @@
-import { ArrowLeft, Search, Trash2, UserPlus, Filter } from "lucide-react";
+import { ArrowLeft, Search, Trash2, UserPlus, Filter, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { StatusBadge } from "../StatusBadge";
 
@@ -8,13 +8,16 @@ interface ManageComplaintsProps {
   onUpdateStatus: (id: string, status: string) => void;
   onDeleteComplaint: (id: string) => void;
   onAssignStaff: (id: string, staff: string) => void;
+  onAddRemark: (id: string, remark: string) => void;
+  users: any[];
 }
 
-export function ManageComplaints({ complaints, onNavigate, onUpdateStatus, onDeleteComplaint, onAssignStaff }: ManageComplaintsProps) {
+export function ManageComplaints({ complaints, onNavigate, onUpdateStatus, onDeleteComplaint, onAssignStaff, onAddRemark, users }: ManageComplaintsProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
+  const staffMembers = users.filter(u => u.role === "staff");
 
   const filteredComplaints = complaints.filter(complaint => {
     const matchesSearch = complaint.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -134,18 +137,20 @@ export function ManageComplaints({ complaints, onNavigate, onUpdateStatus, onDel
                       <StatusBadge status={complaint.status} />
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      {complaint.assignedTo || (
-                        <button
-                          onClick={() => {
-                            const staff = prompt("Enter staff name:");
-                            if (staff) onAssignStaff(complaint.id, staff);
-                          }}
-                          className="flex items-center gap-1 text-[#1e3a8a] hover:text-[#06b6d4] transition-colors"
-                        >
-                          <UserPlus className="w-4 h-4" />
-                          Assign
-                        </button>
-                      )}
+                      <select
+                        value={complaint.assignedTo || ""}
+                        onChange={(e) => {
+                          if (e.target.value) onAssignStaff(complaint.id, e.target.value);
+                        }}
+                        className="w-full px-2 py-1 rounded-lg bg-muted border border-border text-xs focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        <option value="">Unassigned</option>
+                        {staffMembers.map(staff => (
+                          <option key={staff.id} value={staff.name}>
+                            {staff.name}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">
                       {new Date(complaint.date).toLocaleDateString()}
@@ -161,6 +166,16 @@ export function ManageComplaints({ complaints, onNavigate, onUpdateStatus, onDel
                           <option value="in-progress">In Progress</option>
                           <option value="resolved">Resolved</option>
                         </select>
+                        <button
+                          onClick={() => {
+                            const remark = prompt("Enter message for student:");
+                            if (remark) onAddRemark(complaint.id, remark);
+                          }}
+                          className="p-2 rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
+                          title="Send Message to Student"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </button>
                         <button
                           onClick={() => {
                             if (confirm("Are you sure you want to delete this complaint?")) {

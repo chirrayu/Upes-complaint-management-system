@@ -27,13 +27,16 @@ def add_user():
         "id": str(uuid.uuid4()),
         "name": data['name'],
         "email": data['email'],
+        "password": data.get('password', 'upes123'), # Default password if not provided
         "role": data.get('role', 'student'),
+        "studentId": data.get('studentId', ''),
         "department": data.get('department', ''),
         "assignedComplaints": 0
     }
     
     users_col.insert_one(user)
     if "_id" in user: del user["_id"]
+    if "password" in user: del user["password"] # Don't return password in response
     return jsonify(user), 201
 
 @user_update_bp.route('/api/users/<string:user_id>', methods=['DELETE'])

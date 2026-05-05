@@ -93,3 +93,6 @@ Thumbs.db
 *.bak
 *.backup
 *~
+
+# file not to be pushed 
+seed.py

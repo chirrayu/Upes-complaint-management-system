@@ -223,7 +223,8 @@ export default function App() {
       const response = await fetch(`${API_BASE_URL}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user)
+        body: JSON.stringify(user),
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -239,7 +240,8 @@ export default function App() {
       const response = await fetch(`${API_BASE_URL}/users/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
+        body: JSON.stringify(updates),
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -253,7 +255,8 @@ export default function App() {
   const handleDeleteUser = async (id: string) => {
     try {
       const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -328,6 +331,8 @@ export default function App() {
               onUpdateStatus={handleUpdateStatus}
               onDeleteComplaint={handleDeleteComplaint}
               onAssignStaff={handleAssignStaff}
+              onAddRemark={handleAddRemark}
+              users={users}
             />
           );
         case "user-management":
@@ -360,12 +365,12 @@ export default function App() {
     if (currentRole === "staff") {
       switch (currentView) {
         case "dashboard":
-          return <StaffDashboard complaints={complaints} staffName="John Smith" onNavigate={setCurrentView} />;
+          return <StaffDashboard complaints={complaints} staffName={currentUser?.name || "Staff Member"} onNavigate={setCurrentView} />;
         case "my-complaints":
           return (
             <MyComplaints
               complaints={complaints}
-              staffName="John Smith"
+              staffName={currentUser?.name || "Staff Member"}
               onNavigate={setCurrentView}
               onUpdateStatus={handleUpdateStatus}
               onAddRemark={handleAddRemark}

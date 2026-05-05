@@ -1,17 +1,22 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import config
 
 # Configuration
-SENDER_EMAIL = "chirrayusharma@gmail.com"
-APP_PASSWORD = "qjxj nekq ilki dizd"
+SENDER_EMAIL = config.SENDER_EMAIL
+APP_PASSWORD = config.APP_PASSWORD
 
 def send_email(to_email, subject, body_text, body_html=None):
     """Base utility function to send an email with both plain text and HTML."""
     message = MIMEMultipart("alternative")
-    message["From"] = SENDER_EMAIL
-    message["To"] = "chirrayusharma@gmail.com"
+    message["From"] = f"UPES Support <{SENDER_EMAIL}>"
+    message["To"] = to_email
     message["Subject"] = subject
+    message["Reply-To"] = SENDER_EMAIL
+    
+    import time
+    message["Message-ID"] = f"<{int(time.time())}@{SENDER_EMAIL.split('@')[1]}>"
     
     # Attach plain text (fallback for older clients)
     message.attach(MIMEText(body_text, "plain"))
@@ -21,22 +26,20 @@ def send_email(to_email, subject, body_text, body_html=None):
         message.attach(MIMEText(body_html, "html"))
         
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
+        print(f"[DEBUG] Connecting to SMTP server for {to_email}...")
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
         server.login(SENDER_EMAIL, APP_PASSWORD)
         server.sendmail(SENDER_EMAIL, to_email, message.as_string())
         print(f"[SUCCESS] Email successfully sent to {to_email} (Subject: {subject})")
     except Exception as e:
-        print(f"[ERROR] Failed to send email to {to_email}. Error: {e}")
+        print(f"[ERROR] Failed to send email to {to_email}. Error type: {type(e).__name__}, Error: {e}")
     finally:
         try:
             server.quit()
         except:
             pass
 
-# ==========================================
-# 📨 TEMPLATE FUNCTIONS
-# ==========================================
+# TEMPLATE FUNCTIONS (rate limit is the problem so won't be able to sne)
 
 def send_complaint_submitted(to_email, student_name, complaint_id, title):
     """1. Complaint Submitted - Sent to Student"""

@@ -21,7 +21,13 @@ def get_next_complaint_id():
         return None
 
 def run_async(target, *args):
-    thread = threading.Thread(target=target, args=args)
+    def wrapper():
+        try:
+            target(*args)
+        except Exception as e:
+            print(f"[ASYNC ERROR] Error in background thread: {e}")
+            
+    thread = threading.Thread(target=wrapper)
     thread.start()
 
 def get_least_busy_staff():
@@ -96,7 +102,9 @@ def file_complaint():
     # Trigger Emails
     run_async(send_email.send_complaint_submitted, student_email, student_name, string_id, title)
     if staff:
-        run_async(send_email.send_complaint_assigned, "chirrayusharma@gmail.com", staff['name'], string_id, student_email, student_name)
+        # Redirecting staff notification to Admin for reliability
+        import config
+        run_async(send_email.send_complaint_assigned, config.SENDER_EMAIL, staff['name'], string_id, student_email, student_name)
 
     return jsonify(complaint), 201
 
@@ -116,6 +124,11 @@ def assign_complaint(id):
         if not staff:
             return jsonify({"error": "No staff available for assignment"}), 400
         staff_name = staff['name']
+    else:
+        # Validate that the staff member exists
+        staff = users_col.find_one({"name": staff_name, "role": "staff"})
+        if not staff:
+            return jsonify({"error": f"Staff member '{staff_name}' not found"}), 404
 
     result = complaints_col.update_one(
         {"id": id},
@@ -125,10 +138,27 @@ def assign_complaint(id):
     if result.matched_count == 0:
         return jsonify({"error": "Complaint not found"}), 404
 
+    # Trigger Email Notification
+    complaint = complaints_col.find_one({"id": id})
+    staff = users_col.find_one({"name": staff_name, "role": "staff"})
+    if staff and complaint:
+        import config
+        run_async(send_email.send_complaint_assigned, 
+                  config.SENDER_EMAIL, 
+                  staff['name'], 
+                  id, 
+                  complaint.get('email'), 
+                  complaint.get('name'))
+
     return jsonify({"message": "Assigned to " + staff_name}), 200
 
 @complaint_bp.route('/api/complaints/<string:id>/status', methods=['PATCH'])
+@token_required
 def update_status(id):
+    # Only admin and staff can change status
+    if request.user_role not in ['admin', 'staff']:
+        return jsonify({"error": "Unauthorized"}), 403
+
     data = request.json
     new_status = data.get('status')
     

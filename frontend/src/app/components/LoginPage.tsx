@@ -123,7 +123,3 @@ export function LoginPage({ onLogin, isLoading }: LoginPageProps) {
     </div>
   );
 }
-      </div>
-    </div>
-  );
-}

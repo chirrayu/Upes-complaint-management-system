@@ -30,6 +30,7 @@ export function UserManagement({ onNavigate, users, onAddUser, onEditUser, onDel
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
     role: "student" as "student" | "staff" | "admin",
     studentId: "",
     department: "",
@@ -50,21 +51,24 @@ export function UserManagement({ onNavigate, users, onAddUser, onEditUser, onDel
     onAddUser({
       name: formData.name,
       email: formData.email,
+      password: formData.password,
       role: formData.role,
       studentId: formData.studentId || undefined,
       department: formData.department || undefined,
       assignedComplaints: 0,
-    });
+    } as any);
     setIsAddModalOpen(false);
-    setFormData({ name: "", email: "", role: "student", studentId: "", department: "" });
+    setFormData({ name: "", email: "", password: "", role: "student", studentId: "", department: "" });
   };
 
   const handleEdit = () => {
     if (!selectedUser) return;
-    onEditUser(selectedUser.id, formData);
+    const { password, ...otherData } = formData;
+    const updates = password ? formData : otherData;
+    onEditUser(selectedUser.id, updates);
     setIsEditModalOpen(false);
     setSelectedUser(null);
-    setFormData({ name: "", email: "", role: "student", studentId: "", department: "" });
+    setFormData({ name: "", email: "", password: "", role: "student", studentId: "", department: "" });
   };
 
   const openEditModal = (user: User) => {
@@ -72,6 +76,7 @@ export function UserManagement({ onNavigate, users, onAddUser, onEditUser, onDel
     setFormData({
       name: user.name,
       email: user.email,
+      password: "", // Don't show password for existing users
       role: user.role,
       studentId: user.studentId || "",
       department: user.department || "",
@@ -246,6 +251,18 @@ function UserForm({ formData, setFormData, onSubmit, submitLabel }: any) {
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
+          className="w-full px-4 py-3 rounded-xl bg-input-background border border-border focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+        />
+      </div>
+
+      <div>
+        <label className="block mb-2 text-foreground">Password *</label>
+        <input
+          type="password"
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          required={submitLabel === "Add User"}
+          placeholder={submitLabel === "Add User" ? "Enter password" : "Leave blank to keep current"}
           className="w-full px-4 py-3 rounded-xl bg-input-background border border-border focus:outline-none focus:ring-2 focus:ring-primary transition-all"
         />
       </div>

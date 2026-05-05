@@ -101,17 +101,8 @@ export function ComplaintsList({ complaints, onNavigate, onUpdateStatus }: Compl
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col items-end">
                   <StatusBadge status={complaint.status} />
-                  <select
-                    value={complaint.status}
-                    onChange={(e) => onUpdateStatus(complaint.id, e.target.value)}
-                    className="px-3 py-2 rounded-lg bg-muted border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="pending">Mark as Pending</option>
-                    <option value="in-progress">Mark as In Progress</option>
-                    <option value="resolved">Mark as Resolved</option>
-                  </select>
                 </div>
               </div>
             </div>
