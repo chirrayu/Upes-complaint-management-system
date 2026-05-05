@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify
 import jwt
-import config
+import portal_config
 
 def token_required(f):
     @wraps(f)
@@ -12,7 +12,7 @@ def token_required(f):
             return jsonify({'error': 'Authentication required!'}), 401
 
         try:
-            data = jwt.decode(token, config.SECRET_KEY, algorithms=["HS256"])
+            data = jwt.decode(token, portal_config.SECRET_KEY, algorithms=["HS256"])
             # You can attach the user data to the request if needed
             request.user_id = data['user_id']
             request.user_role = data['role']

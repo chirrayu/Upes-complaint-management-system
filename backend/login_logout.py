@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, make_response
 from pymongo import MongoClient
 import jwt
 from datetime import datetime, timedelta
-import config
+import portal_config
 from database import users_col
 from middleware import token_required
 

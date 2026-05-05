@@ -103,8 +103,8 @@ def file_complaint():
     run_async(send_email.send_complaint_submitted, student_email, student_name, string_id, title)
     if staff:
         # Redirecting staff notification to Admin for reliability
-        import config
-        run_async(send_email.send_complaint_assigned, config.SENDER_EMAIL, staff['name'], string_id, student_email, student_name)
+        import portal_config
+        run_async(send_email.send_complaint_assigned, portal_config.SENDER_EMAIL, staff['name'], string_id, student_email, student_name)
 
     return jsonify(complaint), 201
 
@@ -142,9 +142,9 @@ def assign_complaint(id):
     complaint = complaints_col.find_one({"id": id})
     staff = users_col.find_one({"name": staff_name, "role": "staff"})
     if staff and complaint:
-        import config
+        import portal_config
         run_async(send_email.send_complaint_assigned, 
-                  config.SENDER_EMAIL, 
+                  portal_config.SENDER_EMAIL, 
                   staff['name'], 
                   id, 
                   complaint.get('email'), 

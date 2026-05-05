@@ -1,11 +1,11 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import config
+import portal_config
 
 # Configuration
-SENDER_EMAIL = config.SENDER_EMAIL
-APP_PASSWORD = config.APP_PASSWORD
+SENDER_EMAIL = portal_config.SENDER_EMAIL
+APP_PASSWORD = portal_config.APP_PASSWORD
 
 def send_email(to_email, subject, body_text, body_html=None):
     """Base utility function to send an email with both plain text and HTML."""
