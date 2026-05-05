@@ -27,6 +27,8 @@ def get_users():
     return jsonify(users), 200
 
 if __name__ == '__main__':
+    import os
     # Print success message safely
     print("[SUCCESS] Flask server starting...")
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
