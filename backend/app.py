@@ -19,7 +19,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(user_update_bp)
 app.register_blueprint(complaint_bp)
 
-from database import categories_col, users_col
+from app_db import categories_col, users_col
 
 @app.route('/api/categories', methods=['GET'])
 def get_categories():
