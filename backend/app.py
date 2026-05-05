@@ -1,3 +1,9 @@
+import os
+import sys
+
+# Ensure the backend directory is in the python path for Render
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from login_logout import auth_bp
