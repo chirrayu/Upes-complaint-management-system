@@ -21,7 +21,7 @@ def send_email(to_email, subject, body_text, body_html=None):
     # Attach plain text (fallback for older clients)
     message.attach(MIMEText(body_text, "plain"))
     
-    # Attach HTML if provided (makes the email look much nicer)
+    # Attach HTML if provided (makes the email look much nicer) # rivjr
     if body_html:
         message.attach(MIMEText(body_html, "html"))
         
